@@ -14,7 +14,7 @@ import UIKit
         return ProgressBar.showProgressBar(self.view)
     }
     
-    func removeAllProgressBars() {
+    func hideProgressBar() {
         ProgressBar.removeAllProgressBars(self.view)
     }
 }
