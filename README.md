@@ -3,7 +3,7 @@
 
 Material Linear Progress Bar for your iOS apps
 
-![Demo](https://i.imgur.com/FVarcz7.gifv)
+![Demo](https://i.imgur.com/FVarcz7.gif)
 
 ## Installation
 ### Carthage:
