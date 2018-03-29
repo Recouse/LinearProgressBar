@@ -11,6 +11,12 @@ Material Linear Progress Bar for your iOS apps
 github "Recouse/LinearProgressBar"
 ```
 
+### CocoaPods:
+Add this to your `Podfile`
+```
+pod 'MaterialProgressBar'
+```
+
 ## Requirements
 - iOS 8.0+
 - Xcode 9.0+
