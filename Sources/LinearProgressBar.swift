@@ -8,13 +8,18 @@
 
 import UIKit
 
+public enum LinearProgressBarState {
+    case determinate(percentage: CGFloat)
+    case indeterminate
+}
+
 open class LinearProgressBar: UIView {
-    
-    let indeterminateAnimationKey = "indeterminateAnimation"
+    let animationKey = "linearProgressBarAnimation"
     
     let progressLayer = CAShapeLayer()
     
     private(set) var isAnimating = false
+    open private(set) var state: LinearProgressBarState = .indeterminate
     var progressBarWidth: CGFloat = 2.0
     var animationDuration : TimeInterval = 2.0
     
@@ -35,8 +40,6 @@ open class LinearProgressBar: UIView {
         progressLayer.strokeStart = 0
         progressLayer.strokeEnd = 0
         
-        progressLayer.frame = bounds
-        
         layer.addSublayer(progressLayer)
     }
     
@@ -49,11 +52,13 @@ open class LinearProgressBar: UIView {
     private func updateLineLayers() {
         frame = CGRect(x: 0, y: 0, width: bounds.width, height: progressBarWidth)
         
-        let linePath = UIBezierPath(rect: CGRect(x: 0, y: 0, width: bounds.size.width, height: progressBarWidth))
-        linePath.move(to: CGPoint(x: 0, y: 0))
-        linePath.addLine(to: CGPoint(x: bounds.width, y: 0))
+        
+        let linePath = UIBezierPath()
+        linePath.move(to: CGPoint(x: 0, y: bounds.maxY))
+        linePath.addLine(to: CGPoint(x: bounds.width, y: bounds.maxY))
 
         progressLayer.path = linePath.cgPath
+        progressLayer.frame = bounds
     }
     
     func forceBeginRefreshing() {
@@ -68,12 +73,12 @@ open class LinearProgressBar: UIView {
         
         isAnimating = true
         
-        progressLayer.add(indeterminateAnimation(), forKey: indeterminateAnimationKey)
+        progressLayer.add(indeterminateAnimation(), forKey: animationKey)
     }
     
     open func stopAnimating(completion: (() -> Void)? = nil) {
         isAnimating = false
-        progressLayer.removeAnimation(forKey: indeterminateAnimationKey)
+        progressLayer.removeAnimation(forKey: animationKey)
         
         completion?()
     }
@@ -81,45 +86,40 @@ open class LinearProgressBar: UIView {
     // MARK: - Private
     
     private func indeterminateAnimation() -> CAAnimationGroup {
-        let headInAnimation = CABasicAnimation(keyPath: "strokeStart")
-        headInAnimation.duration = animationDuration / 2
-        headInAnimation.fromValue = 0
-        headInAnimation.toValue = 0.25
-        headInAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionLinear)
-
-        let tailInAnimation = CABasicAnimation(keyPath: "strokeEnd")
-        tailInAnimation.duration = animationDuration / 2
-        tailInAnimation.fromValue = 0
-        tailInAnimation.toValue = 1
-        tailInAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionLinear)
-
-        let headOutAnimation = CABasicAnimation(keyPath: "strokeStart")
-        headOutAnimation.beginTime = animationDuration / 2
-        headOutAnimation.duration = animationDuration / 2
-        headOutAnimation.fromValue = 0.25
-        headOutAnimation.toValue = 1
-        headOutAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionLinear)
+        let firstAnimation = CABasicAnimation(keyPath: "strokeEnd")
+        firstAnimation.beginTime = animationDuration * 0.55
+        firstAnimation.duration = animationDuration * 0.40
+        firstAnimation.fromValue = 0
+        firstAnimation.toValue = 1
+        firstAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
         
-        let tailOutAnimation = CABasicAnimation(keyPath: "strokeEnd")
-        tailOutAnimation.beginTime = animationDuration / 2
-        tailOutAnimation.duration = animationDuration / 2
-        tailOutAnimation.fromValue = 1
-        tailOutAnimation.toValue = 1
-        tailOutAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionLinear)
+        let secondAnimation = CABasicAnimation(keyPath: "strokeStart")
+        secondAnimation.beginTime = animationDuration * 0.66
+        secondAnimation.duration = animationDuration * 0.40
+        secondAnimation.fromValue = -0
+        secondAnimation.toValue = 1.2
+        secondAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionLinear)
+        
+        let thirdAnimation = CABasicAnimation(keyPath: "strokeEnd")
+        thirdAnimation.beginTime = animationDuration * 0.88
+        thirdAnimation.duration = animationDuration * 0.20
+        thirdAnimation.fromValue = 1
+        thirdAnimation.toValue = 1
+        thirdAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionLinear)
+
+
         
         let animation = CAAnimationGroup()
         animation.duration = animationDuration
         animation.animations = [
-            headInAnimation,
-            tailInAnimation,
-            headOutAnimation,
-            tailOutAnimation
+            firstAnimation,
+            secondAnimation,
+            thirdAnimation
         ]
         animation.repeatCount = .infinity
         animation.isRemovedOnCompletion = false
+        animation.fillMode = kCAFillModeForwards
         
         return animation
     }
 }
-
-
