@@ -110,28 +110,16 @@ open class LinearProgressBar: UIView {
         self.progressBar.frame = CGRect(origin: CGPoint(x: 0, y :0), size: CGSize(width: 0, height: heightForLinearBar))
         
         UIView.animateKeyframes(withDuration: duration, delay: 0, options: [], animations: {
-            UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: 1/5, animations: {
+            UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: 1/3, animations: {
                 self.progressBar.frame = CGRect(x: 0, y: 0, width: self.widthForLinearBar * 0.7, height: self.heightForLinearBar)
             })
-            
-            UIView.addKeyframe(withRelativeStartTime: 1/6, relativeDuration: 1/5, animations: {
-                self.progressBar.frame = CGRect(x: superview.frame.width, y: 0, width: self.widthForLinearBar * 0.07, height: self.heightForLinearBar)
-            })
-            
-            UIView.addKeyframe(withRelativeStartTime: 2/6, relativeDuration: 0, animations: {
-                self.progressBar.frame = CGRect(x: 0, y: 0, width: 0, height: self.heightForLinearBar)
-            })
-            
-            UIView.addKeyframe(withRelativeStartTime: 3/6, relativeDuration: 1/5, animations: {
-                self.progressBar.frame = CGRect(x: 0, y: 0, width: self.widthForLinearBar * 0.2, height: self.heightForLinearBar)
-            })
-            
-            UIView.addKeyframe(withRelativeStartTime: 4/6, relativeDuration: 1/5, animations: {
-                self.progressBar.frame = CGRect(x: superview.frame.width / 3, y: 0, width: self.widthForLinearBar * 0.4, height: self.heightForLinearBar)
-            })
-            
-            UIView.addKeyframe(withRelativeStartTime: 5/6, relativeDuration: 1/5, animations: {
+
+            UIView.addKeyframe(withRelativeStartTime: 1/3, relativeDuration: 1/3, animations: {
                 self.progressBar.frame = CGRect(x: superview.frame.width, y: 0, width: self.widthForLinearBar * 0.7, height: self.heightForLinearBar)
+            })
+
+            UIView.addKeyframe(withRelativeStartTime: 2/3, relativeDuration: 0, animations: {
+                self.progressBar.frame = CGRect(x: 0, y: 0, width: 0, height: self.heightForLinearBar)
             })
         }) { _ in
             if self.isAnimating {
