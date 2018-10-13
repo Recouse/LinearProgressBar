@@ -101,10 +101,10 @@ open class LinearProgressBar: UIView {
         secondAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionLinear)
         
         let thirdAnimation = CABasicAnimation(keyPath: "strokeEnd")
-        thirdAnimation.beginTime = animationDuration * 0.88
-        thirdAnimation.duration = animationDuration * 0.20
+        thirdAnimation.beginTime = animationDuration * 0.77
+        thirdAnimation.duration = animationDuration * 0.50
         thirdAnimation.fromValue = 1
-        thirdAnimation.toValue = 1
+        thirdAnimation.toValue = 3
         thirdAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionLinear)
 
 
@@ -117,7 +117,7 @@ open class LinearProgressBar: UIView {
             thirdAnimation
         ]
         animation.repeatCount = .infinity
-        animation.isRemovedOnCompletion = false
+        animation.isRemovedOnCompletion = true
         animation.fillMode = kCAFillModeForwards
         
         return animation
