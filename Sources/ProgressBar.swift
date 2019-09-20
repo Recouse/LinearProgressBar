@@ -24,30 +24,30 @@ open class ProgressBar: NSObject {
     static let progressBarViewTag = 39074685
     
     open class Layout {
-        open static func toTop(_ view: UIView) {
+        public static func toTop(_ view: UIView) {
             assert(view.superview != nil, "`view` should have a superview")
             
             view.translatesAutoresizingMaskIntoConstraints = false
             
             let constraintT = NSLayoutConstraint(item: view,
-                                                 attribute: NSLayoutAttribute.top,
-                                                 relatedBy: NSLayoutRelation.equal,
+                                                 attribute: NSLayoutConstraint.Attribute.top,
+                                                 relatedBy: NSLayoutConstraint.Relation.equal,
                                                  toItem: view.superview,
-                                                 attribute: NSLayoutAttribute.top,
+                                                 attribute: NSLayoutConstraint.Attribute.top,
                                                  multiplier: 1,
                                                  constant: 0)
             let constraintL = NSLayoutConstraint(item: view,
-                                                 attribute: NSLayoutAttribute.left,
-                                                 relatedBy: NSLayoutRelation.equal,
+                                                 attribute: NSLayoutConstraint.Attribute.left,
+                                                 relatedBy: NSLayoutConstraint.Relation.equal,
                                                  toItem: view.superview,
-                                                 attribute: NSLayoutAttribute.left,
+                                                 attribute: NSLayoutConstraint.Attribute.left,
                                                  multiplier: 1,
                                                  constant: 0)
             let constraintR = NSLayoutConstraint(item: view,
-                                                 attribute: NSLayoutAttribute.right,
-                                                 relatedBy: NSLayoutRelation.equal,
+                                                 attribute: NSLayoutConstraint.Attribute.right,
+                                                 relatedBy: NSLayoutConstraint.Relation.equal,
                                                  toItem: view.superview,
-                                                 attribute: NSLayoutAttribute.right,
+                                                 attribute: NSLayoutConstraint.Attribute.right,
                                                  multiplier: 1,
                                                  constant: 0)
             
