@@ -19,8 +19,8 @@ pod 'MaterialProgressBar'
 
 ## Requirements
 - iOS 8.0+
-- Xcode 9.0+
-- Swift 3.2+
+- Xcode 11.0+
+- Swift 5.0+
 
 ## Usage
 ```swift
