@@ -8,149 +8,159 @@
 
 import UIKit
 
+public enum LinearProgressBarState {
+    case determinate(percentage: CGFloat)
+    case indeterminate
+}
+
 open class LinearProgressBar: UIView {
-    public var isAnimating = false
+
+    private let firstProgressComponent = CAShapeLayer()
+    private let secondProgressComponent = CAShapeLayer()
+    private lazy var progressComponents = [firstProgressComponent, secondProgressComponent]
+
+    private(set) var isAnimating = false
+    open private(set) var state: LinearProgressBarState = .indeterminate
+    var animationDuration: TimeInterval = 2.5
     
-    private var parentView: UIView!
-    private var progressBar: UIView!
+    open var progressBarWidth: CGFloat = 2.0 {
+        didSet {
+            updateProgressBarWidth()
+        }
+    }
     
-    public var duration: TimeInterval = 2.0
-    public var progressBarBackgroundColor: UIColor = UIColor.clear
-    public var progressBarColor: UIColor = UIColor(red: 0/255, green: 122/255, blue: 255/255, alpha: 1)
-    public var heightForLinearBar: CGFloat = 2
-    public var widthForLinearBar: CGFloat = 0
+    open var progressBarColor: UIColor = .blue {
+        didSet {
+            updateProgressBarColor()
+        }
+    }
     
     override public init(frame: CGRect) {
         super.init(frame: frame)
-        
-        self.clipsToBounds = true
-        self.progressBar = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: heightForLinearBar))
-    }
-    
-    convenience init(duration: TimeInterval? = nil, progressBarColor: UIColor? = nil, progressBarBackgroundColor: UIColor? = nil) {
-        self.init(frame: .zero)
-        
-        self.duration = duration ?? self.duration
-        self.progressBarBackgroundColor = progressBarBackgroundColor ?? self.progressBarBackgroundColor
-        self.progressBarColor = progressBarColor ?? self.progressBarColor
+        prepareLines()
     }
     
     required public init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        super.init(coder: aDecoder)
+        
+        prepareLines()
+    }
+    
+    func prepareLines() {
+        progressComponents.forEach {
+            $0.fillColor = progressBarColor.cgColor
+            $0.lineWidth = progressBarWidth
+            $0.strokeColor = progressBarColor.cgColor
+            $0.strokeStart = 0
+            $0.strokeEnd = 0
+            layer.addSublayer($0)
+        }
     }
     
     override open func layoutSubviews() {
         super.layoutSubviews()
         
-        if widthForLinearBar == 0 || widthForLinearBar == frame.height {
-            widthForLinearBar = frame.width
-        }
-        
-        frame = CGRect(x: frame.origin.x, y: frame.origin.y, width: frame.width, height: heightForLinearBar)
+        updateLineLayers()
     }
     
-    open func startAnimating(){
-        configureColors()
-        
-        show()
-        
-        if !isAnimating {
-            self.isAnimating = true
-            
-            UIView.animate(withDuration: 0.5, delay:0, options: [], animations: {
-                self.frame = CGRect(x: 0, y: self.frame.origin.y, width: self.widthForLinearBar, height: self.heightForLinearBar)
-            }, completion: { animationFinished in
-                self.addSubview(self.progressBar)
-                self.configureAnimation()
-            })
+    private func updateLineLayers() {
+        frame = CGRect(x: 0, y: 0, width: bounds.width, height: progressBarWidth)
+
+        let linePath = UIBezierPath()
+        linePath.move(to: CGPoint(x: 0, y: bounds.maxY))
+        linePath.addLine(to: CGPoint(x: bounds.width, y: bounds.maxY))
+
+        progressComponents.forEach {
+            $0.path = linePath.cgPath
+            $0.frame = bounds
         }
+
+    }
+    
+    private func updateProgressBarColor() {
+        progressComponents.forEach {
+            $0.fillColor = progressBarColor.cgColor
+            $0.strokeColor = progressBarColor.cgColor
+        }
+    }
+    
+    private func updateProgressBarWidth() {
+        progressComponents.forEach {
+            $0.lineWidth = progressBarWidth
+        }
+    }
+    
+    func forceBeginRefreshing() {
+        isAnimating = false
+        startAnimating()
+    }
+    
+    open func startAnimating() {
+        guard !isAnimating else { return }
+        isAnimating = true
+        applyProgressAnimations()
     }
     
     open func stopAnimating(completion: (() -> Void)? = nil) {
+        guard isAnimating else { return }
         isAnimating = false
-        
-        UIView.animate(withDuration: 0.5, animations: {
-            self.progressBar.frame = CGRect(x: self.widthForLinearBar, y: self.frame.origin.y, width: self.widthForLinearBar, height: 0)
-        }, completion: { completed in
-            if completed {
-                completion?()
-            }
-        })
+        removeProgressAnimations()
+        completion?()
     }
     
     // MARK: - Private
-    
-    fileprivate func show() {
-        // Only show once
-        if superview != nil {
-            return
-        }
-        
-        // Find current top viewcontroller
-        if let topController = getTopViewController() {
-            let superView: UIView = topController.view
-            superView.addSubview(self)
-        }
+
+    private func applyProgressAnimations() {
+        applyFirstComponentAnimations(to: firstProgressComponent)
+        applySecondComponentAnimations(to: secondProgressComponent)
     }
-    
-    fileprivate func configureColors() {
-        backgroundColor = progressBarBackgroundColor
-        progressBar.backgroundColor = progressBarColor
-        
-        layoutIfNeeded()
-    }
-    
-    fileprivate func configureAnimation() {
-        guard let superview = superview else {
-            stopAnimating()
-            
-            return
+
+    private func applyFirstComponentAnimations(to layer: CALayer) {
+        let strokeEndAnimation = CAKeyframeAnimation(keyPath: "strokeEnd")
+        strokeEndAnimation.values = [0, 1]
+        strokeEndAnimation.keyTimes = [0, NSNumber(value: 1.2 / animationDuration)]
+        strokeEndAnimation.timingFunctions = [CAMediaTimingFunction(name: .easeOut),
+                                              CAMediaTimingFunction(name: .easeOut)]
+
+        let strokeStartAnimation = CAKeyframeAnimation(keyPath: "strokeStart")
+        strokeStartAnimation.values = [0, 1.2]
+        strokeStartAnimation.keyTimes = [NSNumber(value: 0.25 / animationDuration),
+                                         NSNumber(value: 1.8 / animationDuration)]
+        strokeStartAnimation.timingFunctions = [CAMediaTimingFunction(name: .easeIn),
+                                                CAMediaTimingFunction(name: .easeIn)]
+
+        [strokeEndAnimation, strokeStartAnimation].forEach {
+            $0.duration = animationDuration
+            $0.repeatCount = .infinity
         }
-        
-        self.progressBar.frame = CGRect(origin: CGPoint(x: 0, y :0), size: CGSize(width: 0, height: heightForLinearBar))
-        
-        UIView.animateKeyframes(withDuration: duration, delay: 0, options: [], animations: {
-            UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: 1/5, animations: {
-                self.progressBar.frame = CGRect(x: 0, y: 0, width: self.widthForLinearBar * 0.7, height: self.heightForLinearBar)
-            })
-            
-            UIView.addKeyframe(withRelativeStartTime: 1/6, relativeDuration: 1/5, animations: {
-                self.progressBar.frame = CGRect(x: superview.frame.width, y: 0, width: self.widthForLinearBar * 0.07, height: self.heightForLinearBar)
-            })
-            
-            UIView.addKeyframe(withRelativeStartTime: 2/6, relativeDuration: 0, animations: {
-                self.progressBar.frame = CGRect(x: 0, y: 0, width: 0, height: self.heightForLinearBar)
-            })
-            
-            UIView.addKeyframe(withRelativeStartTime: 3/6, relativeDuration: 1/5, animations: {
-                self.progressBar.frame = CGRect(x: 0, y: 0, width: self.widthForLinearBar * 0.2, height: self.heightForLinearBar)
-            })
-            
-            UIView.addKeyframe(withRelativeStartTime: 4/6, relativeDuration: 1/5, animations: {
-                self.progressBar.frame = CGRect(x: superview.frame.width / 3, y: 0, width: self.widthForLinearBar * 0.4, height: self.heightForLinearBar)
-            })
-            
-            UIView.addKeyframe(withRelativeStartTime: 5/6, relativeDuration: 1/5, animations: {
-                self.progressBar.frame = CGRect(x: superview.frame.width, y: 0, width: self.widthForLinearBar * 0.7, height: self.heightForLinearBar)
-            })
-        }) { _ in
-            if self.isAnimating {
-                self.configureAnimation()
-            }
-        }
+
+        layer.add(strokeEndAnimation, forKey: "firstComponentStrokeEnd")
+        layer.add(strokeStartAnimation, forKey: "firstComponentStrokeStart")
+
     }
-    
-    // MARK: - Utils
-    
-    fileprivate func getTopViewController() -> UIViewController? {
-        var topController: UIViewController? = UIApplication.shared.keyWindow?.rootViewController
-        
-        while topController?.presentedViewController != nil {
-            topController = topController?.presentedViewController
+
+    private func applySecondComponentAnimations(to layer: CALayer) {
+        let strokeEndAnimation = CAKeyframeAnimation(keyPath: "strokeEnd")
+        strokeEndAnimation.values = [0, 1.1]
+        strokeEndAnimation.keyTimes = [NSNumber(value: 1.375 / animationDuration), 1]
+
+        let strokeStartAnimation = CAKeyframeAnimation(keyPath: "strokeStart")
+        strokeStartAnimation.values = [0, 1]
+        strokeStartAnimation.keyTimes = [NSNumber(value: 1.825 / animationDuration), 1]
+
+        [strokeEndAnimation, strokeStartAnimation].forEach {
+            $0.timingFunctions = [CAMediaTimingFunction(name: .easeOut),
+                                  CAMediaTimingFunction(name: .easeOut)]
+            $0.duration = animationDuration
+            $0.repeatCount = .infinity
         }
-        
-        return topController
+
+        layer.add(strokeEndAnimation, forKey: "secondComponentStrokeEnd")
+        layer.add(strokeStartAnimation, forKey: "secondComponentStrokeStart")
     }
+
+    private func removeProgressAnimations() {
+        progressComponents.forEach { $0.removeAllAnimations() }
+    }
+
 }
-
-

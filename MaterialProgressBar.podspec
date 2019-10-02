@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
 s.name             = "MaterialProgressBar"
-s.version          = "0.2"
+s.version          = "1.1"
 s.summary          = "Material Linear Progress Bar for your iOS apps"
 s.homepage         = "https://github.com/Recouse/LinearProgressBar"
 s.license          = 'MIT'

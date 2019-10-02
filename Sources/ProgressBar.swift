@@ -30,24 +30,24 @@ open class ProgressBar: NSObject {
             view.translatesAutoresizingMaskIntoConstraints = false
             
             let constraintT = NSLayoutConstraint(item: view,
-                                                 attribute: NSLayoutConstraint.Attribute.top,
-                                                 relatedBy: NSLayoutConstraint.Relation.equal,
+                                                 attribute: .top,
+                                                 relatedBy: .equal,
                                                  toItem: view.superview,
-                                                 attribute: NSLayoutConstraint.Attribute.top,
+                                                 attribute: .top,
                                                  multiplier: 1,
                                                  constant: 0)
             let constraintL = NSLayoutConstraint(item: view,
-                                                 attribute: NSLayoutConstraint.Attribute.left,
-                                                 relatedBy: NSLayoutConstraint.Relation.equal,
+                                                 attribute: .left,
+                                                 relatedBy: .equal,
                                                  toItem: view.superview,
-                                                 attribute: NSLayoutConstraint.Attribute.left,
+                                                 attribute: .left,
                                                  multiplier: 1,
                                                  constant: 0)
             let constraintR = NSLayoutConstraint(item: view,
-                                                 attribute: NSLayoutConstraint.Attribute.right,
-                                                 relatedBy: NSLayoutConstraint.Relation.equal,
+                                                 attribute: .right,
+                                                 relatedBy: .equal,
                                                  toItem: view.superview,
-                                                 attribute: NSLayoutConstraint.Attribute.right,
+                                                 attribute: .right,
                                                  multiplier: 1,
                                                  constant: 0)
             
