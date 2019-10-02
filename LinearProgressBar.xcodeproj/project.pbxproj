@@ -7,18 +7,34 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		26D6944C2344DEE200981700 /* LinearProgressBar.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 26D6944B2344DEE200981700 /* LinearProgressBar.framework */; };
+		26D6944D2344DEE200981700 /* LinearProgressBar.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 26D6944B2344DEE200981700 /* LinearProgressBar.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		FA41CEA4205BE749007ACF2C /* LinearProgressBar.h in Headers */ = {isa = PBXBuildFile; fileRef = FA9FCED12052AEE4006FE759 /* LinearProgressBar.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		FA41CEAD205BE9FB007ACF2C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA41CEAC205BE9FB007ACF2C /* AppDelegate.swift */; };
 		FA41CEAF205BE9FB007ACF2C /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA41CEAE205BE9FB007ACF2C /* ViewController.swift */; };
 		FA41CEB4205BE9FB007ACF2C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FA41CEB3205BE9FB007ACF2C /* Assets.xcassets */; };
 		FA41CEB7205BE9FC007ACF2C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA41CEB5205BE9FB007ACF2C /* LaunchScreen.storyboard */; };
-		FA41CEBE205BEC6A007ACF2C /* LinearProgressBar.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA9FCEBF2052A9A8006FE759 /* LinearProgressBar.framework */; };
 		FA41CEC0205BED98007ACF2C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA41CEBF205BED98007ACF2C /* UIKit.framework */; };
 		FA9FCED42052AEE4006FE759 /* LinearProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA9FCECF2052AEE4006FE759 /* LinearProgressBar.swift */; };
 		FA9FCED52052AEE4006FE759 /* ProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA9FCED02052AEE4006FE759 /* ProgressBar.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		26D6944E2344DEE200981700 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				26D6944D2344DEE200981700 /* LinearProgressBar.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		26D6944B2344DEE200981700 /* LinearProgressBar.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LinearProgressBar.framework; path = ../../../../Desktop/LinearProgressBar.framework; sourceTree = "<group>"; };
 		FA41CEAA205BE9FB007ACF2C /* LinearProgressBarDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LinearProgressBarDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA41CEAC205BE9FB007ACF2C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FA41CEAE205BE9FB007ACF2C /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -38,8 +54,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				26D6944C2344DEE200981700 /* LinearProgressBar.framework in Frameworks */,
 				FA41CEC0205BED98007ACF2C /* UIKit.framework in Frameworks */,
-				FA41CEBE205BEC6A007ACF2C /* LinearProgressBar.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -68,6 +84,7 @@
 		FA41CEBD205BEC6A007ACF2C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				26D6944B2344DEE200981700 /* LinearProgressBar.framework */,
 				FA41CEBF205BED98007ACF2C /* UIKit.framework */,
 			);
 			name = Frameworks;
@@ -132,6 +149,7 @@
 				FA41CEA6205BE9FB007ACF2C /* Sources */,
 				FA41CEA7205BE9FB007ACF2C /* Frameworks */,
 				FA41CEA8205BE9FB007ACF2C /* Resources */,
+				26D6944E2344DEE200981700 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
