@@ -14,14 +14,26 @@ public enum LinearProgressBarState {
 }
 
 open class LinearProgressBar: UIView {
-    let animationKey = "linearProgressBarAnimation"
-    
-    let progressLayer = CAShapeLayer()
-    
+
+    private let firstProgressComponent = CAShapeLayer()
+    private let secondProgressComponent = CAShapeLayer()
+    private lazy var progressComponents = [firstProgressComponent, secondProgressComponent]
+
     private(set) var isAnimating = false
     open private(set) var state: LinearProgressBarState = .indeterminate
-    var progressBarWidth: CGFloat = 2.0
-    var animationDuration : TimeInterval = 2.0
+    var animationDuration: TimeInterval = 2.5
+    
+    open var progressBarWidth: CGFloat = 2.0 {
+        didSet {
+            updateProgressBarWidth()
+        }
+    }
+    
+    open var progressBarColor: UIColor = .blue {
+        didSet {
+            updateProgressBarColor()
+        }
+    }
     
     override public init(frame: CGRect) {
         super.init(frame: frame)
@@ -30,35 +42,52 @@ open class LinearProgressBar: UIView {
     
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+        
         prepareLines()
     }
     
     func prepareLines() {
-        progressLayer.fillColor = UIColor.blue.withAlphaComponent(0.2).cgColor
-        progressLayer.lineWidth = progressBarWidth
-        progressLayer.strokeColor = UIColor.blue.cgColor
-        progressLayer.strokeStart = 0
-        progressLayer.strokeEnd = 0
-        
-        layer.addSublayer(progressLayer)
+        progressComponents.forEach {
+            $0.fillColor = progressBarColor.cgColor
+            $0.lineWidth = progressBarWidth
+            $0.strokeColor = progressBarColor.cgColor
+            $0.strokeStart = 0
+            $0.strokeEnd = 0
+            layer.addSublayer($0)
+        }
     }
     
     override open func layoutSubviews() {
         super.layoutSubviews()
-
+        
         updateLineLayers()
     }
     
     private func updateLineLayers() {
         frame = CGRect(x: 0, y: 0, width: bounds.width, height: progressBarWidth)
-        
-        
+
         let linePath = UIBezierPath()
         linePath.move(to: CGPoint(x: 0, y: bounds.maxY))
         linePath.addLine(to: CGPoint(x: bounds.width, y: bounds.maxY))
 
-        progressLayer.path = linePath.cgPath
-        progressLayer.frame = bounds
+        progressComponents.forEach {
+            $0.path = linePath.cgPath
+            $0.frame = bounds
+        }
+
+    }
+    
+    private func updateProgressBarColor() {
+        progressComponents.forEach {
+            $0.fillColor = progressBarColor.cgColor
+            $0.strokeColor = progressBarColor.cgColor
+        }
+    }
+    
+    private func updateProgressBarWidth() {
+        progressComponents.forEach {
+            $0.lineWidth = progressBarWidth
+        }
     }
     
     func forceBeginRefreshing() {
@@ -67,59 +96,71 @@ open class LinearProgressBar: UIView {
     }
     
     open func startAnimating() {
-        if(isAnimating){
-            return
-        }
-        
+        guard !isAnimating else { return }
         isAnimating = true
-        
-        progressLayer.add(indeterminateAnimation(), forKey: animationKey)
+        applyProgressAnimations()
     }
     
     open func stopAnimating(completion: (() -> Void)? = nil) {
+        guard isAnimating else { return }
         isAnimating = false
-        progressLayer.removeAnimation(forKey: animationKey)
-        
+        removeProgressAnimations()
         completion?()
     }
     
     // MARK: - Private
-    
-    private func indeterminateAnimation() -> CAAnimationGroup {
-        let firstAnimation = CABasicAnimation(keyPath: "strokeEnd")
-        firstAnimation.beginTime = animationDuration * 0.55
-        firstAnimation.duration = animationDuration * 0.40
-        firstAnimation.fromValue = 0
-        firstAnimation.toValue = 1
-        firstAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
-        
-        let secondAnimation = CABasicAnimation(keyPath: "strokeStart")
-        secondAnimation.beginTime = animationDuration * 0.66
-        secondAnimation.duration = animationDuration * 0.40
-        secondAnimation.fromValue = -0
-        secondAnimation.toValue = 1.2
-        secondAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionLinear)
-        
-        let thirdAnimation = CABasicAnimation(keyPath: "strokeEnd")
-        thirdAnimation.beginTime = animationDuration * 0.88
-        thirdAnimation.duration = animationDuration * 0.20
-        thirdAnimation.fromValue = 1
-        thirdAnimation.toValue = 1
-        thirdAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionLinear)
 
-
-        
-        let animation = CAAnimationGroup()
-        animation.duration = animationDuration
-        animation.animations = [
-            firstAnimation,
-            secondAnimation,
-            thirdAnimation
-        ]
-        animation.repeatCount = .infinity
-        animation.isRemovedOnCompletion = false
-        animation.fillMode = kCAFillModeForwards
-        
-        return animation
+    private func applyProgressAnimations() {
+        applyFirstComponentAnimations(to: firstProgressComponent)
+        applySecondComponentAnimations(to: secondProgressComponent)
     }
+
+    private func applyFirstComponentAnimations(to layer: CALayer) {
+        let strokeEndAnimation = CAKeyframeAnimation(keyPath: "strokeEnd")
+        strokeEndAnimation.values = [0, 1]
+        strokeEndAnimation.keyTimes = [0, NSNumber(value: 1.2 / animationDuration)]
+        strokeEndAnimation.timingFunctions = [CAMediaTimingFunction(name: .easeOut),
+                                              CAMediaTimingFunction(name: .easeOut)]
+
+        let strokeStartAnimation = CAKeyframeAnimation(keyPath: "strokeStart")
+        strokeStartAnimation.values = [0, 1.2]
+        strokeStartAnimation.keyTimes = [NSNumber(value: 0.25 / animationDuration),
+                                         NSNumber(value: 1.8 / animationDuration)]
+        strokeStartAnimation.timingFunctions = [CAMediaTimingFunction(name: .easeIn),
+                                                CAMediaTimingFunction(name: .easeIn)]
+
+        [strokeEndAnimation, strokeStartAnimation].forEach {
+            $0.duration = animationDuration
+            $0.repeatCount = .infinity
+        }
+
+        layer.add(strokeEndAnimation, forKey: "firstComponentStrokeEnd")
+        layer.add(strokeStartAnimation, forKey: "firstComponentStrokeStart")
+
+    }
+
+    private func applySecondComponentAnimations(to layer: CALayer) {
+        let strokeEndAnimation = CAKeyframeAnimation(keyPath: "strokeEnd")
+        strokeEndAnimation.values = [0, 1.1]
+        strokeEndAnimation.keyTimes = [NSNumber(value: 1.375 / animationDuration), 1]
+
+        let strokeStartAnimation = CAKeyframeAnimation(keyPath: "strokeStart")
+        strokeStartAnimation.values = [0, 1]
+        strokeStartAnimation.keyTimes = [NSNumber(value: 1.825 / animationDuration), 1]
+
+        [strokeEndAnimation, strokeStartAnimation].forEach {
+            $0.timingFunctions = [CAMediaTimingFunction(name: .easeOut),
+                                  CAMediaTimingFunction(name: .easeOut)]
+            $0.duration = animationDuration
+            $0.repeatCount = .infinity
+        }
+
+        layer.add(strokeEndAnimation, forKey: "secondComponentStrokeEnd")
+        layer.add(strokeStartAnimation, forKey: "secondComponentStrokeStart")
+    }
+
+    private func removeProgressAnimations() {
+        progressComponents.forEach { $0.removeAllAnimations() }
+    }
+
 }

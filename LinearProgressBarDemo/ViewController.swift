@@ -9,9 +9,7 @@
 import UIKit
 import LinearProgressBar
 
-class ViewController: UIViewController {
-    var linearProgressBar: LinearProgressBar!
-    
+class ViewController: UIViewController {    
     override func viewDidLoad() {
         super.viewDidLoad()
         
