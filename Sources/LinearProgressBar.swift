@@ -21,8 +21,19 @@ open class LinearProgressBar: UIView {
 
     private(set) var isAnimating = false
     open private(set) var state: LinearProgressBarState = .indeterminate
-    var progressBarWidth: CGFloat = 2.0
     var animationDuration: TimeInterval = 2.5
+    
+    open var progressBarWidth: CGFloat = 2.0 {
+        didSet {
+            updateProgressBarWidth()
+        }
+    }
+    
+    open var progressBarColor: UIColor = .blue {
+        didSet {
+            updateProgressBarColor()
+        }
+    }
     
     override public init(frame: CGRect) {
         super.init(frame: frame)
@@ -31,14 +42,15 @@ open class LinearProgressBar: UIView {
     
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+        
         prepareLines()
     }
     
     func prepareLines() {
         progressComponents.forEach {
-            $0.fillColor = UIColor.blue.withAlphaComponent(0.2).cgColor
+            $0.fillColor = progressBarColor.cgColor
             $0.lineWidth = progressBarWidth
-            $0.strokeColor = UIColor.blue.cgColor
+            $0.strokeColor = progressBarColor.cgColor
             $0.strokeStart = 0
             $0.strokeEnd = 0
             layer.addSublayer($0)
@@ -47,6 +59,7 @@ open class LinearProgressBar: UIView {
     
     override open func layoutSubviews() {
         super.layoutSubviews()
+        
         updateLineLayers()
     }
     
@@ -62,6 +75,19 @@ open class LinearProgressBar: UIView {
             $0.frame = bounds
         }
 
+    }
+    
+    private func updateProgressBarColor() {
+        progressComponents.forEach {
+            $0.fillColor = progressBarColor.cgColor
+            $0.strokeColor = progressBarColor.cgColor
+        }
+    }
+    
+    private func updateProgressBarWidth() {
+        progressComponents.forEach {
+            $0.lineWidth = progressBarWidth
+        }
     }
     
     func forceBeginRefreshing() {
