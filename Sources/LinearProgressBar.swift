@@ -88,6 +88,7 @@ open class LinearProgressBar: UIView {
         progressComponents.forEach {
             $0.lineWidth = progressBarWidth
         }
+        updateLineLayers()
     }
     
     func forceBeginRefreshing() {
