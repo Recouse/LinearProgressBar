@@ -10,37 +10,107 @@ import UIKit
 import LinearProgressBar
 
 class ViewController: UIViewController {
-    var firstProgressBar: LinearProgressBar!
+    var toggleProgessBarItem: UIBarButtonItem!
+    
+    var isLoading: Bool = false
+    
+    let firstProgressBar: LinearProgressBar = {
+        let progressBar = LinearProgressBar()
+        progressBar.backgroundColor = UIColor.lightGray.withAlphaComponent(0.5)
+        progressBar.progressBarColor = .systemOrange
+        progressBar.progressBarWidth = 5
+        progressBar.cornerRadius = 4
+        
+        return progressBar
+    }()
+    
+    let secondProgressBar: LinearProgressBar = {
+        let progressBar = LinearProgressBar()
+        progressBar.backgroundColor = UIColor.lightGray.withAlphaComponent(0.5)
+        progressBar.progressBarColor = .systemGreen
+        progressBar.progressBarWidth = 5
+        progressBar.cornerRadius = 4
+           
+        return progressBar
+    }()
+    
+    let thirdProgressBar: LinearProgressBar = {
+        let progressBar = LinearProgressBar()
+        progressBar.backgroundColor = UIColor.lightGray.withAlphaComponent(0.5)
+        progressBar.progressBarColor = .systemPurple
+        progressBar.progressBarWidth = 5
+        progressBar.cornerRadius = 4
+           
+        return progressBar
+    }()
+    
+    lazy var progressBarsStackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [
+            self.firstProgressBar, self.secondProgressBar, self.thirdProgressBar
+        ])
+        stackView.axis = .vertical
+        stackView.alignment = .fill
+        stackView.distribution = .fill
+        stackView.spacing = 40
+        
+        return stackView
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         edgesForExtendedLayout = []
         
-        prepareNavigationController()
-        
-        showProgressBar()
+        prepareNavigationItem()
+        toggleProgressBar()
         
         prepareDemoProgressBars()
+        startAnimating()
+    }
+    
+    func startAnimating() {
+        [firstProgressBar, secondProgressBar, thirdProgressBar].forEach {
+            $0.startAnimating()
+        }
+    }
+    
+    func stopAnimating() {
+        [firstProgressBar, secondProgressBar, thirdProgressBar].forEach {
+            $0.stopAnimating()
+        }
+    }
+    
+    @objc func toggleProgressBar() {
+        isLoading.toggle()
+        
+        if isLoading {
+            toggleProgessBarItem.title = "Hide"
+            showProgressBar()
+        } else {
+            toggleProgessBarItem.title = "Show"
+            hideProgressBar()
+        }
     }
 }
 
 extension ViewController {
-    func prepareNavigationController() {
-        navigationItem.title = "Loading..."
+    func prepareNavigationItem() {
+        navigationItem.title = "LinearProgressBar Demo"
+        
+        toggleProgessBarItem = UIBarButtonItem(
+            title: "Show",
+            style: .plain,
+            target: self, action: #selector(toggleProgressBar)
+        )
+        navigationItem.rightBarButtonItem = toggleProgessBarItem
     }
     
     func prepareDemoProgressBars() {
-        firstProgressBar = LinearProgressBar()
-        firstProgressBar.backgroundColor = UIColor.lightGray.withAlphaComponent(0.5)
-        firstProgressBar.progressBarColor = .systemOrange
-        firstProgressBar.progressBarWidth = 5
-        firstProgressBar.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(firstProgressBar)
-        firstProgressBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 50).isActive = true
-        firstProgressBar.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 16).isActive = true
-        firstProgressBar.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -16).isActive = true
-        firstProgressBar.startAnimating()
+        progressBarsStackView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(progressBarsStackView)
+        progressBarsStackView.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+        progressBarsStackView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 16).isActive = true
+        progressBarsStackView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -16).isActive = true
     }
 }
 

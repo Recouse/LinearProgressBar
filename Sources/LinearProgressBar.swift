@@ -37,9 +37,16 @@ open class LinearProgressBar: UIView {
         }
     }
     
+    open var cornerRadius: CGFloat = 0 {
+        didSet {
+            updateCornerRadius()
+        }
+    }
+    
     override public init(frame: CGRect) {
         super.init(frame: frame)
         
+        prepare()
         prepareAnimationKeySuffix()
         prepareLines()
     }
@@ -47,6 +54,7 @@ open class LinearProgressBar: UIView {
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         
+        prepare()
         prepareAnimationKeySuffix()
         prepareLines()
     }
@@ -55,6 +63,10 @@ open class LinearProgressBar: UIView {
         super.layoutSubviews()
         
         updateLineLayers()
+    }
+    
+    private func prepare() {
+        clipsToBounds = true
     }
     
     private func prepareAnimationKeySuffix() {
@@ -98,6 +110,10 @@ open class LinearProgressBar: UIView {
             $0.lineWidth = progressBarWidth
         }
         updateLineLayers()
+    }
+    
+    private func updateCornerRadius() {
+        layer.cornerRadius = cornerRadius
     }
     
     func forceBeginRefreshing() {
