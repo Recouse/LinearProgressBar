@@ -19,8 +19,6 @@ open class LinearProgressBar: UIView {
     private let secondProgressComponent = CAShapeLayer()
     private lazy var progressComponents = [firstProgressComponent, secondProgressComponent]
     
-    private var animationKeySuffix: String = ""
-
     private(set) var isAnimating = false
     open private(set) var state: LinearProgressBarState = .indeterminate
     var animationDuration: TimeInterval = 2.5
@@ -47,7 +45,6 @@ open class LinearProgressBar: UIView {
         super.init(frame: frame)
         
         prepare()
-        prepareAnimationKeySuffix()
         prepareLines()
     }
     
@@ -55,7 +52,6 @@ open class LinearProgressBar: UIView {
         super.init(coder: aDecoder)
         
         prepare()
-        prepareAnimationKeySuffix()
         prepareLines()
     }
     
@@ -67,10 +63,6 @@ open class LinearProgressBar: UIView {
     
     private func prepare() {
         clipsToBounds = true
-    }
-    
-    private func prepareAnimationKeySuffix() {
-        animationKeySuffix = "\(Int.random(in: 1...10000))"
     }
     
     func prepareLines() {
@@ -160,8 +152,8 @@ open class LinearProgressBar: UIView {
             $0.repeatCount = .infinity
         }
 
-        layer.add(strokeEndAnimation, forKey: "firstComponentStrokeEnd\(animationKeySuffix)")
-        layer.add(strokeStartAnimation, forKey: "firstComponentStrokeStart\(animationKeySuffix)")
+        layer.add(strokeEndAnimation, forKey: "firstComponentStrokeEnd")
+        layer.add(strokeStartAnimation, forKey: "firstComponentStrokeStart")
 
     }
 
@@ -181,8 +173,8 @@ open class LinearProgressBar: UIView {
             $0.repeatCount = .infinity
         }
 
-        layer.add(strokeEndAnimation, forKey: "secondComponentStrokeEnd\(animationKeySuffix)")
-        layer.add(strokeStartAnimation, forKey: "secondComponentStrokeStart\(animationKeySuffix)")
+        layer.add(strokeEndAnimation, forKey: "secondComponentStrokeEnd")
+        layer.add(strokeStartAnimation, forKey: "secondComponentStrokeStart")
     }
 
     private func removeProgressAnimations() {
