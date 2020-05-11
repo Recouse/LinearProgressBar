@@ -1,9 +1,10 @@
 # LinearProgressBar
+[![Cocoapods Compatible](https://img.shields.io/cocoapods/v/MaterialProgressBar.svg)](https://cocoapods.org/pods/MaterialProgressBar)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-brightgreen.svg?style=flat)](https://github.com/Carthage/Carthage)
 
 Material Linear Progress Bar for your iOS apps
 
-![Demo](https://i.imgur.com/HMdMr5J.gif)
+![Demo](https://i.imgur.com/dqFadki.gif)
 
 ## Installation
 ### Carthage:
@@ -18,7 +19,7 @@ pod 'MaterialProgressBar'
 ```
 
 ## Requirements
-- iOS 8.0+
+- iOS 10.0+
 - Xcode 11.0+
 - Swift 5.0+
 
