@@ -18,6 +18,8 @@ open class LinearProgressBar: UIView {
     private let firstProgressComponent = CAShapeLayer()
     private let secondProgressComponent = CAShapeLayer()
     private lazy var progressComponents = [firstProgressComponent, secondProgressComponent]
+    
+    private var animationKeySuffix: String = ""
 
     private(set) var isAnimating = false
     open private(set) var state: LinearProgressBarState = .indeterminate
@@ -29,7 +31,7 @@ open class LinearProgressBar: UIView {
         }
     }
     
-    open var progressBarColor: UIColor = .blue {
+    open var progressBarColor: UIColor = .systemBlue {
         didSet {
             updateProgressBarColor()
         }
@@ -37,13 +39,26 @@ open class LinearProgressBar: UIView {
     
     override public init(frame: CGRect) {
         super.init(frame: frame)
+        
+        prepareAnimationKeySuffix()
         prepareLines()
     }
     
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         
+        prepareAnimationKeySuffix()
         prepareLines()
+    }
+    
+    override open func layoutSubviews() {
+        super.layoutSubviews()
+        
+        updateLineLayers()
+    }
+    
+    private func prepareAnimationKeySuffix() {
+        animationKeySuffix = "\(Int.random(in: 1...10000))"
     }
     
     func prepareLines() {
@@ -57,18 +72,12 @@ open class LinearProgressBar: UIView {
         }
     }
     
-    override open func layoutSubviews() {
-        super.layoutSubviews()
-        
-        updateLineLayers()
-    }
-    
     private func updateLineLayers() {
-        frame = CGRect(x: 0, y: 0, width: bounds.width, height: progressBarWidth)
+        frame = CGRect(x: frame.minX, y: frame.minY, width: bounds.width, height: progressBarWidth)
 
         let linePath = UIBezierPath()
-        linePath.move(to: CGPoint(x: 0, y: bounds.maxY))
-        linePath.addLine(to: CGPoint(x: bounds.width, y: bounds.maxY))
+        linePath.move(to: CGPoint(x: 0, y: bounds.midY))
+        linePath.addLine(to: CGPoint(x: bounds.width, y: bounds.midY))
 
         progressComponents.forEach {
             $0.path = linePath.cgPath
@@ -135,8 +144,8 @@ open class LinearProgressBar: UIView {
             $0.repeatCount = .infinity
         }
 
-        layer.add(strokeEndAnimation, forKey: "firstComponentStrokeEnd")
-        layer.add(strokeStartAnimation, forKey: "firstComponentStrokeStart")
+        layer.add(strokeEndAnimation, forKey: "firstComponentStrokeEnd\(animationKeySuffix)")
+        layer.add(strokeStartAnimation, forKey: "firstComponentStrokeStart\(animationKeySuffix)")
 
     }
 
@@ -156,8 +165,8 @@ open class LinearProgressBar: UIView {
             $0.repeatCount = .infinity
         }
 
-        layer.add(strokeEndAnimation, forKey: "secondComponentStrokeEnd")
-        layer.add(strokeStartAnimation, forKey: "secondComponentStrokeStart")
+        layer.add(strokeEndAnimation, forKey: "secondComponentStrokeEnd\(animationKeySuffix)")
+        layer.add(strokeStartAnimation, forKey: "secondComponentStrokeStart\(animationKeySuffix)")
     }
 
     private func removeProgressAnimations() {
