@@ -17,7 +17,8 @@ class ViewController: UIViewController {
         
         prepareNavigationController()
         
-        showProgressBar()
+        let view = showProgressBar(5)
+        
     }
 }
 

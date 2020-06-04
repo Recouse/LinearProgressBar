@@ -14,6 +14,11 @@ import UIKit
         return ProgressBar.showProgressBar(self.view)
     }
     
+    @discardableResult
+    func showProgressBar(_ duration: TimeInterval) -> UIView {
+        ProgressBar.showProgressBar(duration: duration, self.view)
+    }
+    
     func hideProgressBar() {
         ProgressBar.removeAllProgressBars(self.view)
     }
@@ -78,5 +83,17 @@ open class ProgressBar: NSObject {
                     view.removeFromSuperview()
                 }
         }
+    }
+    
+    open class func showProgressBar(duration: TimeInterval,_ parentView: UIView) -> UIView {
+        let progressBar = LinearProgressBar()
+        progressBar.tag = progressBarViewTag
+        
+        parentView.addSubview(progressBar)
+        
+        Layout.toTop(progressBar)
+        progressBar.animateForAWhile(duration)
+        
+        return progressBar
     }
 }

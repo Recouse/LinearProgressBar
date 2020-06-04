@@ -108,6 +108,13 @@ open class LinearProgressBar: UIView {
         completion?()
     }
     
+    open func animateForAWhile(_ duration: TimeInterval) {
+        startAnimating()
+        DispatchQueue.main.asyncAfter(deadline: .now() + duration) {
+            self.stopAnimating()
+        }
+    }
+    
     // MARK: - Private
 
     private func applyProgressAnimations() {
