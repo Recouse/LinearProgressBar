@@ -18,8 +18,8 @@ class ViewController: UIViewController {
         let progressBar = LinearProgressBar()
         progressBar.backgroundColor = UIColor.lightGray.withAlphaComponent(0.5)
         progressBar.progressBarColor = .systemOrange
-        progressBar.progressBarWidth = 5
-        progressBar.cornerRadius = 4
+        progressBar.progressBarWidth = 4
+        progressBar.cornerRadius = 2
         
         return progressBar
     }()
@@ -28,8 +28,8 @@ class ViewController: UIViewController {
         let progressBar = LinearProgressBar()
         progressBar.backgroundColor = UIColor.lightGray.withAlphaComponent(0.5)
         progressBar.progressBarColor = .systemGreen
-        progressBar.progressBarWidth = 5
-        progressBar.cornerRadius = 4
+        progressBar.progressBarWidth = 4
+        progressBar.cornerRadius = 2
            
         return progressBar
     }()
@@ -38,8 +38,8 @@ class ViewController: UIViewController {
         let progressBar = LinearProgressBar()
         progressBar.backgroundColor = UIColor.lightGray.withAlphaComponent(0.5)
         progressBar.progressBarColor = .systemPurple
-        progressBar.progressBarWidth = 5
-        progressBar.cornerRadius = 4
+        progressBar.progressBarWidth = 4
+        progressBar.cornerRadius = 2
            
         return progressBar
     }()
