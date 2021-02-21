@@ -25,7 +25,7 @@ pod 'MaterialProgressBar'
 
 ## Usage
 ```swift
-import LinearProgressBar
+import MaterialProgressBar
 
 let progressBar = LinearProgressBar()
 ...
